@@ -1,0 +1,31 @@
+services:
+
+  # https://hub.docker.com/r/hashicorp/vault/#!
+  vault:
+    image: hashicorp/vault:1.11.4
+    restart: always
+    environment:
+      VAULT_ADDR: ${VAULT_ADDR}
+      VAULT_TOKEN: ${VAULT_DEV_ROOT_TOKEN_ID}
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
+    ports:
+      - "127.0.0.1:8200:8200"
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  # https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username=postgres"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
